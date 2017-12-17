@@ -42,7 +42,7 @@
 			{
 				v2f o;
 				o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
-				o.worldNormal = normalize(mul(v.normal, (float3x3)_World2Object));
+				o.worldNormal = UnityObjectToWorldNormal(v.normal);
 				o.worldPos = mul(_Object2World, v.vertex).xyz;
 
 				return o;
@@ -50,14 +50,16 @@
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
+				fixed3 worldNormal = normalize(i.worldNormal);
 				fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz;
 
-				fixed3 worldLightDir = normalize(_WorldSpaceLightPos0.xyz);
-				fixed3 eyeDir = normalize(_WorldSpaceCameraPos.xyz - i.worldPos);
+				fixed3 worldLightDir = normalize(UnityWorldSpaceLightDir(i.worldPos));
+				fixed3 eyeDir = normalize(UnityWorldSpaceViewDir(i.worldPos));
 				fixed3 halfDir = normalize(worldLightDir + i.worldNormal);
 
-				fixed3 diffuse = _LightColor0.rgb * _Diffuse.rgb * saturate(dot(i.worldNormal, worldLightDir));
-				fixed3 specular = _LightColor0.rgb * _Specular.rgb * pow(max(0, dot(i.worldNormal, halfDir)), _Gloss);
+				fixed3 diffuse = _LightColor0.rgb * _Diffuse.rgb * saturate(dot(worldNormal, worldLightDir));
+				//fixed3 specular = _LightColor0.rgb * _Specular.rgb * pow(max(0, dot(i.worldNormal, halfDir)), _Gloss);
+				fixed3 specular = _LightColor0.rgb * _Specular.rgb * pow(saturate(dot(worldNormal, halfDir)), _Gloss);
 
 
 				i.color = ambient + diffuse + specular;
