@@ -1,4 +1,4 @@
-﻿Shader "BaseLighting/NormalMap"
+﻿Shader "BaseLighting/NormalMap_TangentSpace"
 {
 	Properties
 	{
