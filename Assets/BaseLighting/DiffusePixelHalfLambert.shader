@@ -1,4 +1,7 @@
-﻿Shader "BaseLighting/DiffusePixelHalfLambert"
+﻿// Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "BaseLighting/DiffusePixelHalfLambert"
 {
 	Properties
 	{
@@ -34,8 +37,8 @@
 			v2f vert (appdata v)
 			{
 				v2f o;
-				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
-				o.worldNormal = mul(v.normal, (fixed3x3)_World2Object);
+				o.vertex = UnityObjectToClipPos(v.vertex);
+				o.worldNormal = mul(v.normal, (fixed3x3)unity_WorldToObject);
 
 				return o;
 			}
