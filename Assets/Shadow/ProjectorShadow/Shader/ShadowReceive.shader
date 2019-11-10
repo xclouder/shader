@@ -15,7 +15,7 @@
 		{
 		    ZWrite Off
 		    ColorMask RGB
-		    Blend DstColor Zero
+		    Blend DstColor Zero		//正片叠底
 		    Offset -1, -1
 		    
 		    CGPROGRAM
@@ -48,8 +48,12 @@
 		    
 		    float4 frag(v2f i):SV_TARGET
 		    {
-		        half4 shadowCol = tex2Dproj(_ShadowTex, UNITY_PROJ_COORD(i.sproj));
-		        half maskCol = tex2Dproj(_FalloffTex, UNITY_PROJ_COORD(i.sproj)).r;
+		    	//tex2Dproj 将定点进行一系列的坐标转换：模型坐标 > 世界坐标 > 相机视点坐标 > 裁剪坐标 > 归一化到屏幕坐标
+		    	//tex2DProj 函数与 tex2D 函数的区别就在于：前者会对齐次纹理坐标除以最后一个分量 w ，然后再进行纹理检索
+		    	//这里使用tex2Dproj原因是：纹理是Camera的TargetTexture，基于屏幕空间，所以采样的时候也必须按当前定点的屏幕空间来
+		        half4 shadowCol = tex2Dproj(_ShadowTex, UNITY_PROJ_COORD(i.sproj));		//UNITY_PROJ_COORD 处理平台差异，一般返回原值
+		        half maskCol = tex2Dproj(_FalloffTex, UNITY_PROJ_COORD(i.sproj)).r;		
+
 		        half a = shadowCol.r * maskCol;
 		        float c = 1.0 - _Intensity * a;
 		        

@@ -35,3 +35,4 @@ sysinfo.txt
 *.unitypackage
 .DS_Store
 
+Assets/Plugins/Editor/JetBrains/JetBrains.Rider.Unity.Editor.Plugin.Repacked.dll.meta
